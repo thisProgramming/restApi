@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Question = require('../models/questions');
 const Answer = require('../models/answers');
+const middleware = require('../middleware');
 
 router.get('/', (req, res, next) => {
     Question.find()
@@ -65,7 +66,7 @@ router.put('/:qId/answers/:aId', (req, res, next) => {
 });
 
 router.delete('/:qId/answers/:aId', (req, res, next) => {
-    Answer.findOne({ questionId: req.params.qId, _id: req.params.aId})
+    Answer.findOne({ questionId: req.params.qId, _id: req.params.aId })
           .then(answer => {
               answer.remove()
                     .then(() => {
@@ -76,6 +77,20 @@ router.delete('/:qId/answers/:aId', (req, res, next) => {
                   });
 
           });
+});
+
+router.put('/:qId/answers/:aId/vote-:dir', middleware, (req, res, next) => {
+    Answer.findOne({ questionId: req.params.qId, _id: req.params.aId })
+          .then(answer => {
+              if(req.params.dir === 'up') {
+                  answer.votes += 1;
+              } else {
+                  answer.votes -= 1;
+              }
+              answer.save()
+                  .catch(error => next(error));
+              res.json({ answer });
+          }).catch(error => next(error));
 });
 
 module.exports = router;
