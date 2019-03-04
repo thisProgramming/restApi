@@ -50,7 +50,7 @@ router.post('/:qId/answers', (req, res, next) => {
                 error.message = 'This question doesn\'t exist.';
                 error.status = 404;
                 next(error);
-    })
+            });
 });
 
 router.put('/:qId/answers/:aId', (req, res, next) => {
@@ -75,7 +75,7 @@ router.delete('/:qId/answers/:aId', (req, res, next) => {
                       next(error);
                   });
 
-          })
+          });
 });
 
 module.exports = router;
