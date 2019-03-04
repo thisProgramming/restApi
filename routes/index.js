@@ -27,20 +27,9 @@ router.get('/:qId', (req, res, next) => {
 });
 
 router.get('/:qId/answers', (req, res, next) => {
-    Question.findById(req.params.qId)
-            .then(question => {
-                Answer.find({ questionId: question._id })
-                      .then(answers => {
-                          res.json({ answers });
-                      })
-                    .catch(error => {
-                        next(error);
-                    });
-            })
-            .catch(error => {
-                error.message = 'This question doesn\'t exists';
-                res.next(error);
-            });
+    Answer.find({ questionId: req.params.qId })
+          .then(answers => res.json({ answers }))
+          .catch(error => next(error));
 });
 
 router.post('/:qId/answers', (req, res, next) => {
@@ -62,6 +51,31 @@ router.post('/:qId/answers', (req, res, next) => {
                 error.status = 404;
                 next(error);
     })
+});
+
+router.put('/:qId/answers/:aId', (req, res, next) => {
+    Answer.findOne({ questionId: req.params.qId, _id: req.params.aId })
+          .then(answer => {
+              let {body} = req;
+              answer.text = body.text;
+              answer.save().catch(error => next(error));
+              res.json({ answer });
+          })
+          .catch(error => next(error));
+});
+
+router.delete('/:qId/answers/:aId', (req, res, next) => {
+    Answer.findOne({ questionId: req.params.qId, _id: req.params.aId})
+          .then(answer => {
+              answer.remove()
+                    .then(() => {
+                        res.json({ text: 'Removed!' });
+                    })
+                  .catch(error => {
+                      next(error);
+                  });
+
+          })
 });
 
 module.exports = router;
