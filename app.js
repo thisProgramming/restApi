@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-mongoose.connect('mongodb+srv://thisProgramming:123Sindiguza@restapi-zfkhy.gcp.mongodb.net/restApi?retryWrites=true', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/restApi', { useNewUrlParser: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection Error: '));
 

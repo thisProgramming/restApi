@@ -7,4 +7,13 @@ function checkDir(req, res, next) {
     }
 }
 
-module.exports = checkDir;
+function answerSort(a, b) {
+    if(a.votes === b.votes) {
+        return b.updated - a.updated;
+    } else {
+        return b.votes - a.votes;
+    }
+}
+
+module.exports.checkDir = checkDir;
+module.exports.answerSort = answerSort;

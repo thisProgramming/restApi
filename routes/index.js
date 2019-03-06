@@ -29,7 +29,10 @@ router.get('/:qId', (req, res, next) => {
 
 router.get('/:qId/answers', (req, res, next) => {
     Answer.find({ questionId: req.params.qId })
-          .then(answers => res.json({ answers }))
+          .then(answers => {
+              answers.sort(middleware.answerSort);
+              res.json({ answers });
+          })
           .catch(error => next(error));
 });
 
@@ -58,8 +61,10 @@ router.put('/:qId/answers/:aId', (req, res, next) => {
     Answer.findOne({ questionId: req.params.qId, _id: req.params.aId })
           .then(answer => {
               let {body} = req;
-              answer.text = body.text;
-              answer.save().catch(error => next(error));
+              let updates = {
+                text: body.text
+              };
+              answer.update(updates);
               res.json({ answer });
           })
           .catch(error => next(error));
@@ -79,16 +84,10 @@ router.delete('/:qId/answers/:aId', (req, res, next) => {
           });
 });
 
-router.put('/:qId/answers/:aId/vote-:dir', middleware, (req, res, next) => {
+router.put('/:qId/answers/:aId/vote-:dir', middleware.checkDir, (req, res, next) => {
     Answer.findOne({ questionId: req.params.qId, _id: req.params.aId })
           .then(answer => {
-              if(req.params.dir === 'up') {
-                  answer.votes += 1;
-              } else {
-                  answer.votes -= 1;
-              }
-              answer.save()
-                  .catch(error => next(error));
+              answer.vote(req.params.dir);
               res.json({ answer });
           }).catch(error => next(error));
 });
