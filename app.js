@@ -12,6 +12,17 @@ mongoose.connect('mongodb://localhost:27017/restApi', { useNewUrlParser: true })
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection Error: '));
 
+/*app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin X-Request-With Content-type');
+
+    if(req.methods === 'OPTION'){
+        res.header('Access-Control-Allow-Methods', 'POST PUT DELETE');
+        return res.status(200).json({});
+    }
+    next();
+});*/
+
 app.use('/questions', mainRouter);
 
 app.use((req, res, next) => {
